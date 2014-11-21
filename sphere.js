@@ -32,9 +32,16 @@ var render = function () {
     
 
     requestAnimationFrame(render);
-    analyser.getFloatFrequencyData(dataArray);
+    analyser.getFloatFrequencyData(freqArray);
+    analyser.getFloatTimeDomainData(ampArray);
+
     for (var c = 0; c < geometry.vertices.length; c++) {
-        var alpha = ((dataArray[Math.floor((32*c) / geometry.vertices.length)] + 100) / 30) || 1;
+
+        var i = (startvertices[c].y + 1) * bufferLength /4;
+        var alpha = ((freqArray[Math.floor(i)] + 100) / 30) || 1;
+        
+        
+        //var alpha = ampArray[Math.floor(c*bufferLength/geometry.vertices.length)]/5;
         geometry.vertices[c].x = startvertices[c].x * alpha;
         geometry.vertices[c].y = startvertices[c].y * alpha;
         geometry.vertices[c].z = startvertices[c].z * alpha;
@@ -49,12 +56,16 @@ var t = 0;
 
 var audiocontext = new AudioContext();
 var myAudio = document.querySelector('audio');
+myAudio.play();
 var source = audiocontext.createMediaElementSource(myAudio);
+
 var analyser = audiocontext.createAnalyser();
 analyser.fftSize = 256;
 var bufferLength = analyser.fftSize;
-var dataArray = new Float32Array(bufferLength);
-analyser.getFloatFrequencyData(dataArray);
+var freqArray = new Float32Array(bufferLength);
+analyser.getFloatFrequencyData(freqArray);
+var ampArray = new Float32Array(bufferLength);
+analyser.getFloatTimeDomainData(ampArray);
 source.connect(analyser);
 analyser.connect(audiocontext.destination);
 
