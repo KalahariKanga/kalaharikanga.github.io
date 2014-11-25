@@ -20,23 +20,25 @@ for (var c = 0; c < 98; c++)
 
 var fn = function(time, t)
 {
-    r = 3;
+    r = 3 + (avg(ampArray) + oldavg) / 2;
+    oldavg = avg(ampArray);
     var alpha = Math.abs(ampArray[Math.floor((t / (2 * Math.PI)) * bufferLength)]);
 
     var theta = t*8*Math.abs(Math.sin(time/100));
-    var phi = t/2;
+    var phi = t / 2;
     
-    return new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+    return new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+    //swapped y and z
 }
 
-function avg(array)
+var avg = function (array)
 {
     var sum = 0;
     for (var p = 0; p < array.length; p++)
         sum += array[p];
     return sum / array.length;
 }
-
+var oldavg = 0;
 camera.position.z = 5;
 camera.position.y = 5;
 camera.position.x = 5;
@@ -45,10 +47,9 @@ camera.lookAt(new THREE.Vector3(0, 0, 0));
 var render = function () {
     t++;
     camera.position.y = 0;
-    //camera.position.x = 5 * Math.sin(t / 50);
-    //camera.position.z = 5 * Math.cos(t / 50);
+    camera.position.x = 5 * Math.sin(t / 50);
+    camera.position.z = 5 * Math.cos(t / 50);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
-
 
     requestAnimationFrame(render);
     analyser.getFloatFrequencyData(freqArray);
